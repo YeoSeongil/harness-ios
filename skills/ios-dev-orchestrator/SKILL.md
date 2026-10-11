@@ -74,13 +74,13 @@ iOS 앱 개발의 7개 전문 에이전트를 요청 범위에 맞게 라우팅�
 TeamCreate(
   team_name: "ios-dev-team",
   members: [
-    { name: "ios-researcher", agent_type: "ios-researcher", model: "opus",   // 낯선 SDK/라이브러리가 있을 때만 포함
+    { name: "ios-researcher", agent_type: "ios-researcher",   // 낯선 SDK/라이브러리가 있을 때만 포함
       prompt: "{조사 대상 SDK/라이브러리}에 대해 조사하라. 결과를 ios-developer와 리더에게 전달하라." },
-    { name: "ios-developer", agent_type: "ios-developer", model: "opus",
+    { name: "ios-developer", agent_type: "ios-developer",
       prompt: "{사용자 요구사항 요약}. ios-researcher가 팀에 있으면 그 조사 결과를 먼저 확인한 뒤 구현하라. 구현 완료 후 변경 파일 목록과 공개 인터페이스를 ios-unit-tester, ios-qa, 리더에게 전달하라." },
-    { name: "ios-unit-tester", agent_type: "ios-unit-tester", model: "opus",
+    { name: "ios-unit-tester", agent_type: "ios-unit-tester",
       prompt: "ios-developer의 구현이 완료되면 해당 공개 인터페이스에 대한 단위 테스트를 작성하고 실행하라." },
-    { name: "ios-qa", agent_type: "ios-qa", model: "opus",
+    { name: "ios-qa", agent_type: "ios-qa",
       prompt: "ios-developer의 구현과 ios-unit-tester의 테스트 결과를 대상으로 통합 정합성을 검증하라. 문제 발견 시 ios-developer에게 파일:라인과 함께 구체적 수정을 요청하라." }
   ]
 )
@@ -130,13 +130,13 @@ TaskCreate(tasks: [
 
 | 조건 | 호출 |
 |------|------|
-| 리서치/기술 검토만 요청 | `Agent(name: "ios-researcher", subagent_type: "ios-researcher", model: "opus", prompt: "{조사 대상}")` → `_workspace/00_research_{topic}.md` |
-| 문서 작성 요청 | `Agent(name: "ios-doc-writer", subagent_type: "ios-doc-writer", model: "opus", prompt: "{대상 범위}. Phase A 산출물이 있으면 _workspace/01_developer_summary.md를 함께 참고하라.")` → `_workspace/04_doc_writer_output.md`에 작성 파일 목록 저장 |
-| 커밋 메시지/커밋 요청 | `Agent(name: "git-commit-writer", subagent_type: "git-commit-writer", model: "opus", prompt: "{대상 범위}. 실제 커밋 실행은 사용자가 명시적으로 요청한 경우에만 수행하라.")` → `_workspace/05_commit_message.md` |
-| PR 작성 요청 | `Agent(name: "pr-writer", subagent_type: "pr-writer", model: "opus", prompt: "{대상 범위}. _workspace/03_qa_report.md(있으면)를 Test plan 작성에 참고하라.")` → `_workspace/06_pr_output.md` |
-| 단위테스트만 요청 | `Agent(name: "ios-unit-tester", subagent_type: "ios-unit-tester", model: "opus", ...)` |
-| QA만 요청 | `Agent(name: "ios-qa", subagent_type: "ios-qa", model: "opus", ...)` |
-| 구현만 요청 (테스트/QA 제외 명시) | `Agent(name: "ios-developer", subagent_type: "ios-developer", model: "opus", ...)` |
+| 리서치/기술 검토만 요청 | `Agent(name: "ios-researcher", subagent_type: "ios-researcher", prompt: "{조사 대상}")` → `_workspace/00_research_{topic}.md` |
+| 문서 작성 요청 | `Agent(name: "ios-doc-writer", subagent_type: "ios-doc-writer", prompt: "{대상 범위}. Phase A 산출물이 있으면 _workspace/01_developer_summary.md를 함께 참고하라.")` → `_workspace/04_doc_writer_output.md`에 작성 파일 목록 저장 |
+| 커밋 메시지/커밋 요청 | `Agent(name: "git-commit-writer", subagent_type: "git-commit-writer", prompt: "{대상 범위}. 실제 커밋 실행은 사용자가 명시적으로 요청한 경우에만 수행하라.")` → `_workspace/05_commit_message.md` |
+| PR 작성 요청 | `Agent(name: "pr-writer", subagent_type: "pr-writer", prompt: "{대상 범위}. _workspace/03_qa_report.md(있으면)를 Test plan 작성에 참고하라.")` → `_workspace/06_pr_output.md` |
+| 단위테스트만 요청 | `Agent(name: "ios-unit-tester", subagent_type: "ios-unit-tester", ...)` |
+| QA만 요청 | `Agent(name: "ios-qa", subagent_type: "ios-qa", ...)` |
+| 구현만 요청 (테스트/QA 제외 명시) | `Agent(name: "ios-developer", subagent_type: "ios-developer", ...)` |
 
 여러 작업이 동시에 요청되면(예: "문서랑 커밋 메시지 둘 다") 의존성이 없는 한 단일 메시지에서 병렬 호출한다 (`run_in_background: true`).
 
